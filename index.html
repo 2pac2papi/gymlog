@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mi Registro de Gym</title>
+  <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+  <h1>Mi Registro de Gym</h1>
+  <form>
+    <label>Fecha:
+      <input type="date" id="fecha" value="2025-09-01">
+    </label><br><br>
+    <label>Ejercicio:
+      <input type="text" id="maquina" placeholder="Press banca">
+    </label><br><br>
+    <label>Peso (kg):
+      <input type="number" id="peso">
+    </label><br><br>
+    <label>Reps:
+      <input type="number" id="reps">
+    </label><br><br>
+    <button type="button" onclick="guardar()">Guardar</button>
+  </form>
+  <div id="historial"></div>
+
+  <script>
+    function guardar(){
+      let fecha=document.getElementById('fecha').value;
+      let maq=document.getElementById('maquina').value;
+      let peso=document.getElementById('peso').value;
+      let reps=document.getElementById('reps').value;
+      let item={fecha, maq, peso, reps};
+      let data=JSON.parse(localStorage.getItem('gym')||'[]');
+      data.push(item);
+      localStorage.setItem('gym',JSON.stringify(data));
+      render();
+    }
+    function render(){
+      let data=JSON.parse(localStorage.getItem('gym')||'[]');
+      let html='<h2>Historial</h2><ul>';
+      data.forEach(r=>{html+='<li>'+r.fecha+' - '+r.maq+' - '+r.peso+'kg x '+r.reps+'</li>';});
+      html+='</ul>';
+      document.getElementById('historial').innerHTML=html;
+    }
+    render();
+  </script>
+</body>
+</html>
