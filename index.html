@@ -1,8 +1,423 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="utf-8"><title>GymLog — Trainer Edition</title></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>GymLog — Trainer Edition</title>
+  <meta name="theme-color" content="#0ea5a4">
+  <link rel="manifest" href="manifest.webmanifest">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1117; --bg-soft:#0e1621; --card:#101a25; --card-2:#0f1520;
+      --text:#e8f5fb; --muted:#a4c7d9; --line:#153244;
+      --primary:#0ea5a4; --primary-700:#0d9488; --secondary:#2563eb;
+      --accent:#f59e0b; --danger:#ef4444; --ok:#22c55e; --info:#60a5fa;
+      --shadow-lg:0 12px 32px rgba(0,0,0,.35);
+      --shadow-md:0 8px 20px rgba(0,0,0,.25);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial}
+    a{color:var(--secondary);text-decoration:none}
+    header{position:sticky;top:0;z-index:20;padding:14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0b1220 0%, #0b1117 100%);display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:10px;align-items:center}
+    .logo{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#34d399, #10b981);display:grid;place-items:center;box-shadow:var(--shadow-md)}
+    .logo svg{width:18px;height:18px;fill:#062c27}
+    h1{font-size:18px;margin:0;font-family:Poppins,Inter,sans-serif;letter-spacing:.3px}
+    main{max-width:980px;margin:0 auto;padding:14px 14px 60px}
+    .pill{border:1px solid #134e4a;color:var(--muted);padding:6px 10px;border-radius:999px;font-size:12px;background:#0d181d}
+    .nav{display:flex;gap:8px;overflow:auto;padding:8px 0 4px;}
+    .tab{appearance:none;border:1px solid #1f3a46;background:#0d151b;color:var(--text);padding:10px 12px;border-radius:14px;font-weight:600;display:flex;gap:8px;align-items:center;transition:transform .06s ease, filter .12s ease, background .2s ease}
+    .tab.active{background:linear-gradient(180deg,#13b6b0,#0ea5a4);border-color:#0d9488;color:#062c2a}
+    .tab:active{transform:scale(0.98);filter:brightness(.95)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .card{background:linear-gradient(180deg, rgba(5,12,18,.4), rgba(9,16,24,.4)), var(--card); border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin:12px 0;box-shadow:var(--shadow-md)}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input,select,textarea{width:100%;padding:12px 12px;border-radius:12px;border:1px solid #1a2f35;background:#0d1518;color:var(--text);font-size:16px;outline:0;transition:border .15s ease, box-shadow .2s ease}
+    input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(14,165,164,.2)}
+    .field-error{border-color:var(--danger)!important;box-shadow:0 0 0 3px rgba(239,68,68,.2)!important}
+    input[type=number]{text-align:center}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btn{appearance:none;border:1px solid #0f766e;background:linear-gradient(180deg,#14c2bb,#0ea5a4);color:#05302d;font-weight:800;padding:12px 14px;border-radius:12px;transition:transform .06s ease, filter .12s ease}
+    .btn.secondary{background:#0f1720;color:#e8f2f6;border-color:#1f2f35}
+    .btn.ghost{background:transparent;border-color:#1f2f35;color:#9dc7d4}
+    .btn.small{padding:8px 10px;font-size:13px}
+    .btn:active{transform:scale(0.98);filter:brightness(.95)}
+    .muted{color:var(--muted);font-size:12px}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{border-bottom:1px solid var(--line);padding:12px 10px;text-align:left;font-size:14px}
+    .table td:last-child{text-align:right}
+    canvas{width:100%;height:130px;background:#0b1417;border:1px solid #17323a;border-radius:10px}
+    .empty{padding:24px;border:1px dashed #2b4452;border-radius:14px;color:var(--muted);text-align:center;background:rgba(3,10,16,.3)}
+    .toast{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:#0d1518;border:1px solid #145a56;color:#e8f2f6;padding:10px 14px;border-radius:12px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .2s ease}
+    .toast.show{opacity:1}
+    .chip{display:inline-flex;align-items:center;gap:8px;background:#0f1a23;border:1px solid #1e3948;color:#cfe9f5;padding:8px 10px;border-radius:12px}
+    @media (max-width:560px){.grid-2,.grid-3{grid-template-columns:1fr} .pill{font-size:11px;padding:4px 8px}}
+  </style>
+</head>
 <body>
-<h1>GymLog — Trainer Edition (Brand Refresh)</h1>
-<p>Build date: 2025-09-01</p>
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M6 7h2v10H6V7zm10 0h2v10h-2V7zM9 9h2v6H9V9zm4 0h2v6h-2V9z"/></svg>
+      </div>
+      <h1>GymLog — Trainer Edition</h1>
+    </div>
+    <div class="row">
+      <span class="pill" id="pill-days">Sesiones: 0</span>
+      <span class="pill" id="pill-vol">Volumen hoy: 0</span>
+      <span class="pill" id="pill-prs">PRs: 0</span>
+    </div>
+  </header>
+  <main>
+    <nav class="nav">
+      <button id="tab-reg" class="tab active">🏋️ Registrar</button>
+      <button id="tab-hist" class="tab">📜 Historial</button>
+      <button id="tab-prog" class="tab">📈 Progreso</button>
+      <button id="tab-body" class="tab">⚖️ Cuerpo</button>
+    </nav>
+
+    <!-- REGISTRAR -->
+    <section id="view-reg" class="card">
+      <div class="grid-2">
+        <div>
+          <label>Fecha</label>
+          <input type="date" id="fecha" value="2025-09-01">
+        </div>
+        <div>
+          <label>Ejercicio (elige o escribe)</label>
+          <input list="ej-dl" id="ej" placeholder="Pecho · Press banca">
+          <datalist id="ej-dl"></datalist>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:8px">
+        <div>
+          <label>Peso (kg)</label>
+          <input type="number" id="peso" step="0.5" inputmode="decimal">
+        </div>
+        <div>
+          <label>Reps</label>
+          <input type="number" id="reps" step="1" inputmode="numeric">
+        </div>
+        <div>
+          <label>RPE (opcional)</label>
+          <input type="number" id="rpe" step="0.5" inputmode="decimal" placeholder="6-10">
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <label>Notas</label>
+        <textarea id="notas" placeholder="Agarre, tempo, técnica…"></textarea>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button class="btn" id="btn-guardar">Guardar</button>
+        <button class="btn secondary" id="btn-guardar-otra">Guardar + otra</button>
+        <button class="btn ghost" id="btn-limpiar">Limpiar</button>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="row" style="justify-content:space-between;width:100%">
+          <span class="muted">Tendencia del ejercicio (últimas 10 sesiones)</span>
+          <span class="muted" id="spark-label">—</span>
+        </div>
+        <canvas id="spark"></canvas>
+      </div>
+    </section>
+
+    <!-- HISTORIAL -->
+    <section id="view-hist" class="card" style="display:none">
+      <div class="grid-2">
+        <div>
+          <label>Ejercicio</label>
+          <select id="f-ej"><option value="">Todos</option></select>
+        </div>
+        <div>
+          <label>Desde</label>
+          <input type="date" id="f-desde">
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:8px">
+        <div>
+          <label>Hasta</label>
+          <input type="date" id="f-hasta">
+        </div>
+        <div class="row" style="align-items:end;justify-content:flex-end">
+          <button class="btn ghost" id="f-limpiar">Limpiar filtros</button>
+        </div>
+      </div>
+      <div class="muted" id="resumen">—</div>
+      <div style="margin:8px 0"><canvas id="weekchart"></canvas></div>
+      <div id="tabla"></div>
+    </section>
+
+    <!-- PROGRESO -->
+    <section id="view-prog" class="card" style="display:none">
+      <div class="row" style="justify-content:space-between">
+        <div class="muted">Volumen semanal (últimas 10 semanas)</div>
+        <div class="muted" id="week-label">—</div>
+      </div>
+      <canvas id="weektrend"></canvas>
+      <div class="card" style="margin-top:10px">
+        <div class="muted">Mejores marcas (PRs por ejercicio)</div>
+        <div id="prs-list" style="margin-top:6px"></div>
+      </div>
+    </section>
+
+    <!-- CUERPO -->
+    <section id="view-body" class="card" style="display:none">
+      <div class="grid-3">
+        <div>
+          <label>Fecha</label>
+          <input type="date" id="b-fecha" value="2025-09-01">
+        </div>
+        <div>
+          <label>Peso corporal (kg)</label>
+          <input type="number" id="b-peso" step="0.1" inputmode="decimal">
+        </div>
+        <div>
+          <label>Altura (cm)</label>
+          <input type="number" id="b-altura" step="0.1" inputmode="decimal" value="172">
+        </div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn" id="btn-b-guardar">Guardar peso/IMC</button>
+        <button class="btn ghost" id="btn-b-limpiar">Limpiar</button>
+      </div>
+      <div class="muted" id="b-msg">—</div>
+      <div class="card" style="margin-top:10px">
+        <div class="muted">Peso corporal e IMC (últimas 12 semanas)</div>
+        <canvas id="bodytrend"></canvas>
+      </div>
+      <div id="body-table" style="margin-top:10px"></div>
+    </section>
+
+    <div id="toast" class="toast">Guardado</div>
+  </main>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const LS_DATA='gl_data', LS_CFG='gl_cfg', LS_BODY='gl_body';
+
+  const DEF_EJ=[
+    'Pecho · Press banca','Pecho · Press inclinado','Espalda · Jalón al pecho','Espalda · Remo sentado',
+    'Hombro · Press hombros','Hombro · Elevaciones laterales','Pierna · Sentadilla','Pierna · Prensa 45°','Pierna · Curl femoral','Pierna · Gemelos',
+    'Bíceps · Curl polea','Tríceps · Extensión polea','Core · Crunch máquina'
+  ];
+
+  const load = (k,def) => { try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(def));}catch(_){return def;} };
+  const save = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+  let data = load(LS_DATA, []);
+  let cfg = load(LS_CFG, { ejercicios: DEF_EJ });
+  let body = load(LS_BODY, []);
+
+  function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1500); }
+
+  $('#tab-reg').onclick=()=>setTab('reg');
+  $('#tab-hist').onclick=()=>setTab('hist');
+  $('#tab-prog').onclick=()=>setTab('prog');
+  $('#tab-body').onclick=()=>setTab('body');
+
+  function setTab(t){
+    $$('.tab').forEach(b=>b.classList.remove('active'));
+    $$('#view-reg,#view-hist,#view-prog,#view-body').forEach(v=>v.style.display='none');
+    if(t==='reg'){ $('#tab-reg').classList.add('active'); $('#view-reg').style.display='block'; drawSpark(); }
+    if(t==='hist'){ $('#tab-hist').classList.add('active'); $('#view-hist').style.display='block'; renderHist(); }
+    if(t==='prog'){ $('#tab-prog').classList.add('active'); $('#view-prog').style.display='block'; renderProg(); }
+    if(t==='body'){ $('#tab-body').classList.add('active'); $('#view-body').style.display='block'; renderBody(); }
+  }
+
+  function uid(){ return Math.random().toString(36).slice(2)+Date.now().toString(36); }
+  function today(){ return (new Date()).toISOString().slice(0,10); }
+  function fmt(d){ return new Date(d+'T00:00:00').toLocaleDateString('es-PE',{year:'numeric',month:'2-digit',day:'2-digit'}); }
+  function weekKey(d){ const dt=new Date(d+'T00:00:00'); const y=dt.getFullYear(); const jan1=new Date(y,0,1); const day=(dt-jan1)/86400000; const wk=Math.floor((day+jan1.getDay()+1)/7)+1; return y+'-W'+String(wk).padStart(2,'0'); }
+
+  function updatePills(){
+    const days = new Set(data.map(r=>r.fecha));
+    $('#pill-days').textContent='Sesiones: '+days.size;
+    const vol = data.filter(r=>r.fecha===today()).reduce((a,r)=>a + Number(r.peso)*Number(r.reps),0);
+    $('#pill-vol').textContent='Volumen hoy: '+vol.toFixed(0);
+    const prs={}; data.forEach(r=>{ const k=r.ej.toLowerCase(); prs[k]=Math.max(prs[k]||0, Number(r.peso)); });
+    $('#pill-prs').textContent='PRs: '+Object.keys(prs).length;
+  }
+
+  function fillEjDatalist(){
+    const dl=$('#ej-dl'); dl.innerHTML=''; cfg.ejercicios.forEach(e=>{ const o=document.createElement('option'); o.value=e; dl.appendChild(o); });
+    const sel=$('#f-ej'); sel.innerHTML='<option value="">Todos</option>' + Array.from(new Set(data.map(r=>r.ej))).sort().map(e=>`<option value="${e}">${e}</option>`).join('');
+  }
+
+  function guardar(keep){
+    const fecha=$('#fecha').value||today();
+    const ej=($('#ej').value||'').trim(); if(!ej) return $('#ej').classList.add('field-error'), toast('Elige/ingresa ejercicio');
+    const peso=Number($('#peso').value); if(!(peso>0)) return $('#peso').classList.add('field-error'), toast('Peso inválido');
+    const reps=Number($('#reps').value); if(!(reps>0)) return $('#reps').classList.add('field-error'), toast('Reps inválidas');
+    const rpe=$('#rpe').value?Number($('#rpe').value):null;
+    const notas=($('#notas').value||'').trim();
+    data.push({id:uid(), fecha, ej, peso, reps, rpe, notas, ts:Date.now()});
+    if(!cfg.ejercicios.includes(ej)){ cfg.ejercicios.push(ej); save(LS_CFG,cfg); }
+    save(LS_DATA,data);
+    if(keep){ $('#reps').value=''; $('#rpe').value=''; $('#notas').value=''; $('#reps').focus(); }
+    else{ $('#ej').value=''; $('#peso').value=''; $('#reps').value=''; $('#rpe').value=''; $('#notas').value=''; }
+    $$('.field-error').forEach(x=>x.classList.remove('field-error'));
+    updatePills(); drawSpark(); if($('#view-hist').style.display==='block') renderHist(); if($('#view-prog').style.display==='block') renderProg();
+    toast('Serie guardada ✅');
+  }
+  $('#btn-guardar').onclick=()=>guardar(false);
+  $('#btn-guardar-otra').onclick=()=>guardar(true);
+  $('#btn-limpiar').onclick=()=>{ $('#ej').value=''; $('#peso').value=''; $('#reps').value=''; $('#rpe').value=''; $('#notas').value=''; $$('.field-error').forEach(x=>x.classList.remove('field-error')); };
+
+  function drawSpark(){
+    const c=$('#spark'); if(!c) return; const ctx=c.getContext('2d'); const w=c.width=c.clientWidth; const h=c.height=c.clientHeight;
+    const name=($('#ej').value||'').trim(); $('#spark-label').textContent = name || '—';
+    ctx.clearRect(0,0,w,h);
+    if(!name) return;
+    const rows=data.filter(r=>r.ej===name).sort((a,b)=>a.fecha.localeCompare(b.fecha)).slice(-10);
+    if(!rows.length) { ctx.fillStyle='#263746'; ctx.fillRect(0,0,w,h); return; }
+    const xs=rows.map((_,i)=> i/(rows.length>1?rows.length-1:1));
+    const ys=rows.map(r=>Number(r.peso));
+    const min=Math.min(...ys), max=Math.max(...ys);
+    function yv(v){ if(max===min) return h/2; return h - (v-min)/(max-min)*h; }
+    let t=0; const steps=22;
+    function frame(){
+      t++; const n=Math.max(2, Math.round((t/steps)*rows.length));
+      ctx.clearRect(0,0,w,h);
+      ctx.beginPath();
+      for(let i=0;i<n;i++){ const x=xs[i]*w; const y=yv(ys[i]); if(i) ctx.lineTo(x,y); else ctx.moveTo(x,y); }
+      ctx.strokeStyle='#34d399'; ctx.lineWidth=2; ctx.stroke();
+      if(t<steps) requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  function renderHist(){
+    fillEjDatalist();
+    const fe=$('#f-ej').value||''; const d=$('#f-desde').value; const h=$('#f-hasta').value;
+    let rows=data.slice();
+    if(fe) rows=rows.filter(r=>r.ej===fe);
+    if(d) rows=rows.filter(r=>r.fecha>=d);
+    if(h) rows=rows.filter(r=>r.fecha<=h);
+    rows.sort((a,b)=> a.fecha===b.fecha? b.ts-a.ts : (a.fecha<b.fecha?1:-1));
+    const vol = rows.reduce((acc,r)=> acc + Number(r.peso)*Number(r.reps), 0);
+    const dias = new Set(rows.map(r=>r.fecha)).size;
+    $('#resumen').textContent = rows.length? `Series: ${rows.length} • Volumen: ${vol.toFixed(0)} • Días: ${dias}` : 'Sin datos para los filtros.';
+    const wrap=$('#tabla');
+    if(rows.length===0){ wrap.innerHTML='<div class="empty">Aún no tienes series registradas. Empieza en <b>Registrar</b> 💪</div>'; } else {
+      let html='<table class="table"><thead><tr><th>Fecha</th><th>Ejercicio</th><th>Peso</th><th>Reps</th><th>RPE</th><th>Notas</th><th></th></tr></thead><tbody>';
+      html+=rows.map(r=>`<tr data-id="${r.id}"><td>${fmt(r.fecha)}</td><td>${r.ej}</td><td>${r.peso}</td><td>${r.reps}</td><td>${r.rpe??''}</td><td>${(r.notas||'').replace(/</g,'&lt;')}</td><td><button class="btn ghost small" data-act="edit">✏️</button> <button class="btn ghost small" data-act="del">🗑️</button></td></tr>`).join('');
+      html+='</tbody></table>'; wrap.innerHTML=html;
+      wrap.querySelectorAll('button[data-act="del"]').forEach(b=>b.onclick=() => {
+        const id=b.closest('tr').getAttribute('data-id');
+        if(confirm('¿Eliminar este registro?')){ data=data.filter(r=>r.id!==id); save(LS_DATA,data); renderHist(); updatePills(); toast('Registro eliminado'); }
+      });
+      wrap.querySelectorAll('button[data-act="edit"]').forEach(b=>b.onclick=() => {
+        const id=b.closest('tr').getAttribute('data-id');
+        const r=data.find(x=>x.id===id); if(!r) return;
+        setTab('reg');
+        $('#fecha').value=r.fecha; $('#ej').value=r.ej; $('#peso').value=r.peso; $('#reps').value=r.reps; $('#rpe').value=r.rpe??''; $('#notas').value=r.notas??'';
+        data=data.filter(x=>x.id!==id); save(LS_DATA,data); updatePills(); toast('Edita y vuelve a guardar');
+      });
+    }
+    const wc=$('#weekchart').getContext('2d'); const w=$('#weekchart').width=$('#weekchart').clientWidth; const hh=$('#weekchart').height=$('#weekchart').clientHeight;
+    wc.clearRect(0,0,w,hh);
+    const byW={}; rows.forEach(r=>{ const k=weekKey(r.fecha); byW[k]=(byW[k]||0)+Number(r.peso)*Number(r.reps); });
+    const keys=Object.keys(byW).sort().slice(-10);
+    if(keys.length){
+      const vals=keys.map(k=>byW[k]); const max=Math.max(...vals)||1;
+      wc.beginPath();
+      keys.forEach((k,i)=>{ const x=(i/(keys.length-1))*w; const y=hh - (byW[k]/max)*hh; if(i) wc.lineTo(x,y); else wc.moveTo(x,y); });
+      wc.strokeStyle='var(--info)'; wc.lineWidth=2; wc.stroke();
+    }
+  }
+  $('#f-ej').onchange=renderHist; $('#f-desde').onchange=renderHist; $('#f-hasta').onchange=renderHist; $('#f-limpiar').onclick=()=>{ $('#f-ej').value=''; $('#f-desde').value=''; $('#f-hasta').value=''; renderHist(); };
+
+  function renderProg(){
+    const best={}; data.forEach(r=>{ const k=r.ej; best[k]=Math.max(best[k]||0, Number(r.peso)); });
+    const prsDiv=$('#prs-list'); prsDiv.innerHTML = Object.keys(best).length? Object.entries(best).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>`<div class="chip">${k} <b>${v} kg</b></div>`).join('') : '<div class="empty">Aún no hay PRs. ¡Vamos a por ellos! 🏆</div>';
+    const c=$('#weektrend'); const ctx=c.getContext('2d'); const w=c.width=c.clientWidth; const h=c.height=c.clientHeight;
+    ctx.clearRect(0,0,w,h);
+    const byW={}; data.forEach(r=>{ const k=weekKey(r.fecha); byW[k]=(byW[k]||0)+Number(r.peso)*Number(r.reps); });
+    const keys=Object.keys(byW).sort().slice(-10); $('#week-label').textContent = keys.length? keys[0]+' → '+keys[keys.length-1] : '—';
+    if(!keys.length) return;
+    const vals=keys.map(k=>byW[k]); const max=Math.max(...vals)||1;
+    ctx.beginPath();
+    keys.forEach((k,i)=>{ const x=(i/(keys.length-1))*w; const y=h - (byW[k]/max)*h; if(i) ctx.lineTo(x,y); else ctx.moveTo(x,y); });
+    ctx.strokeStyle='var(--ok)'; ctx.lineWidth=2; ctx.stroke();
+  }
+
+  function renderBody(){
+    const c=$('#bodytrend'); const ctx=c.getContext('2d'); const w=c.width=c.clientWidth; const h=c.height=c.clientHeight;
+    ctx.clearRect(0,0,w,h);
+    const rows=body.slice().sort((a,b)=>a.fecha.localeCompare(b.fecha)).slice(-12);
+    if(rows.length){
+      const xs=rows.map((_,i)=> i/(rows.length>1?rows.length-1:1));
+      const ys=rows.map(r=>Number(r.pesoKg));
+      const min=Math.min(...ys), max=Math.max(...ys);
+      function yv(v){ if(max===min) return h/2; return h - (v-min)/(max-min)*h; }
+      ctx.beginPath(); rows.forEach((r,i)=>{ const x=xs[i]*w; const y=yv(r.pesoKg); if(i) ctx.lineTo(x,y); else ctx.moveTo(x,y); }); ctx.strokeStyle='var(--accent)'; ctx.lineWidth=2; ctx.stroke();
+    }
+    const wrap=$('#body-table');
+    if(body.length===0){ wrap.innerHTML='<div class="empty">Aún no registras peso. Anota tu primer peso en esta semana para ver el gráfico. ⚖️</div>'; }
+    else {
+      let html='<table class="table"><thead><tr><th>Fecha</th><th>Peso (kg)</th><th>IMC</th><th></th></tr></thead><tbody>';
+      html+=body.slice().sort((a,b)=>b.fecha.localeCompare(a.fecha)).map((r,i)=>`<tr data-idx="${i}"><td>${fmt(r.fecha)}</td><td>${r.pesoKg.toFixed(1)}</td><td>${r.imc.toFixed(1)}</td><td><button class="btn ghost small" data-act="delb">🗑️</button></td></tr>`).join('');
+      html+='</tbody></table>'; wrap.innerHTML=html;
+      wrap.querySelectorAll('button[data-act="delb"]').forEach(b=>b.onclick=()=>{
+        const idx=parseInt(b.closest('tr').getAttribute('data-idx'));
+        if(isNaN(idx)) return;
+        if(confirm('¿Eliminar registro de peso?')){ body.splice(idx,1); save(LS_BODY,body); renderBody(); toast('Peso eliminado'); }
+      });
+    }
+  }
+  function guardarBody(){
+    const fecha=$('#b-fecha').value||today();
+    const peso=parseFloat($('#b-peso').value); if(!(peso>0)) return toast('Peso inválido');
+    const altCm=parseFloat($('#b-altura').value)||172;
+    const imc = peso / Math.pow(altCm/100, 2);
+    const wk=weekKey(fecha);
+    const idx = body.findIndex(b=>weekKey(b.fecha)===wk);
+    const rec={fecha, pesoKg:peso, alturaCm:altCm, imc};
+    if(idx>=0) body[idx]=rec; else body.push(rec);
+    save(LS_BODY, body);
+    $('#b-msg').textContent='Guardado ('+fecha+'): '+peso.toFixed(1)+' kg, IMC '+imc.toFixed(1);
+    $('#b-peso').value=''; renderBody(); toast('Peso guardado ✅');
+  }
+  $('#btn-b-guardar').onclick=guardarBody;
+  $('#btn-b-limpiar').onclick=()=>{ $('#b-peso').value=''; $('#b-msg').textContent='—'; };
+
+  function toCSV(){
+    const rows=[['fecha','ejercicio','peso_kg','reps','rpe','notas']].concat(data.map(r=>[r.fecha,r.ej,r.peso,r.reps,r.rpe??'',(r.notas||'').replace(/\n/g,' ')]));
+    const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='gymlog_series.csv'; a.click();
+  }
+  function backup(){
+    const payload={ data, cfg, body, exportedAt:new Date().toISOString() };
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(payload)],{type:'application/json'})); a.download='gymlog_backup.json'; a.click();
+  }
+  function restore(file){
+    const fr=new FileReader(); fr.onload=()=>{ try{ const p=JSON.parse(fr.result); if(Array.isArray(p.data)) data=p.data; if(p.cfg) cfg=p.cfg; if(Array.isArray(p.body)) body=p.body; save(LS_DATA,data); save(LS_CFG,cfg); save(LS_BODY,body); toast('Restaurado'); updatePills(); fillEjDatalist(); renderHist(); renderProg(); renderBody(); }catch(_){ alert('Archivo inválido'); } }; fr.readAsText(file);
+  }
+  const exportBtn=document.createElement('button'); exportBtn.className='btn'; exportBtn.textContent='Exportar CSV'; exportBtn.onclick=toCSV;
+  const backupBtn=document.createElement('button'); backupBtn.className='btn secondary'; backupBtn.style.marginLeft='8px'; backupBtn.textContent='Copia (JSON)'; backupBtn.onclick=backup;
+  const restoreLbl=document.createElement('label'); restoreLbl.className='btn ghost'; restoreLbl.style.marginLeft='8px'; restoreLbl.textContent='Restaurar'; restoreLbl.setAttribute('for','restore');
+  const restoreInput=document.createElement('input'); restoreInput.id='restore'; restoreInput.type='file'; restoreInput.accept='application/json'; restoreInput.style.display='none'; restoreInput.onchange=e=>e.target.files[0]&&restore(e.target.files[0]);
+  document.addEventListener('DOMContentLoaded',()=>{
+    const hist=document.querySelector('#view-hist'); const row=document.createElement('div'); row.className='row'; row.style.margin='8px 0'; row.append(exportBtn,backupBtn,restoreLbl,restoreInput); hist.insertBefore(row, hist.querySelector('#resumen'));
+  });
+
+  function init(){
+    if(!$('#fecha').value) $('#fecha').value=today();
+    fillEjDatalist(); updatePills(); drawSpark(); renderProg();
+  }
+  init();
+})();
+</script>
 </body>
 </html>
