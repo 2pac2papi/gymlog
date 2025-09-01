@@ -1,9 +1,9 @@
 {
-  "name": "Mi Registro de Gym",
+  "name": "GymLog Pro",
   "short_name": "GymLog",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0f766e",
+  "background_color": "#0b1215",
+  "theme_color": "#0ea5a4",
   "icons": []
 }
