@@ -3,7 +3,7 @@
   "short_name": "GymLog",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0b1215",
+  "background_color": "#0b1117",
   "theme_color": "#0ea5a4",
   "icons": []
 }
